@@ -11,39 +11,28 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     {
         $configs = array(
             array(
-                'import_parameter_handler_map' => true,
                 'parameters' => array(
-                    'foo' => 'FOO',
-                    'bar' => array('variable' => 'SYMFONY__BAR', 'yaml' => true),
+                    'foo' => null,
+                    'bar' => array('yaml' => true),
                 ),
             ),
             array(
                 'parameters' => array(
-                    'baz' => 'SYMFONY__BAZ',
-                    'foo' => array('variable'=> 'OVERWRITE_FOO'),
+                    'baz' => null,
+                    'foo' => null,
                 ),
             ),
         );
 
         $expected = array(
-            'import_parameter_handler_map' => true,
-            'composer_file' => '%kernel.root_dir%/../composer.json',
             'parameters' => array(
-                'foo' => array('variable' => 'OVERWRITE_FOO', 'yaml' => false),
-                'bar' => array('variable' => 'SYMFONY__BAR', 'yaml' => true),
-                'baz' => array('variable' => 'SYMFONY__BAZ', 'yaml' => false),
+                'foo' => array('yaml' => false),
+                'bar' => array('yaml' => true),
+                'baz' => array('yaml' => false),
             ),
         );
 
         $this->assertEquals($expected, $this->processConfiguration($configs));
-    }
-
-    /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     */
-    public function testInvalidComposerFile()
-    {
-        $this->processConfiguration(array(array('composer_file' => null)));
     }
 
     /**

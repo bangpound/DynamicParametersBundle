@@ -24,7 +24,7 @@ class ParameterReplacementPass implements CompilerPassInterface
 
         foreach ($container->getParameter('incenteev_dynamic_parameters.parameters') as $name => $paramConfig) {
             $function = $paramConfig['yaml'] ? 'dynamic_yaml_parameter' : 'dynamic_parameter';
-            $this->parameterExpressions[$name] = sprintf('%s(%s, %s)', $function, var_export($name, true), var_export($paramConfig['variable'], true));
+            $this->parameterExpressions[$name] = sprintf('%s(%s)', $function, var_export($name, true));
         }
 
         $this->visitedDefinitions = new \SplObjectStorage();

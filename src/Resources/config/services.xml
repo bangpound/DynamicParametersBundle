@@ -5,8 +5,12 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
+        <service id="incenteev_dynamic_parameters.parameter_bag" class="Symfony\Component\DependencyInjection\ParameterBag\ParameterBag">
+            <argument type="collection" />
+        </service>
         <service id="incenteev_dynamic_parameters.retriever" class="Incenteev\DynamicParametersBundle\ParameterRetriever">
             <argument type="service" id="service_container" />
+            <argument type="service" id="incenteev_dynamic_parameters.parameter_bag" />
             <argument>%incenteev_dynamic_parameters.parameters%</argument>
         </service>
     </services>

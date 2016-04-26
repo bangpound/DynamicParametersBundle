@@ -3,6 +3,7 @@
 namespace Incenteev\DynamicParametersBundle\Tests;
 
 use Incenteev\DynamicParametersBundle\ParameterRetriever;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 class ParameterRetrieverTest extends \PHPUnit_Framework_TestCase
 {
@@ -14,9 +15,7 @@ class ParameterRetrieverTest extends \PHPUnit_Framework_TestCase
             ->with('foo')
             ->willReturn('bar');
 
-        putenv('MISSING');
-
-        $retriever = new ParameterRetriever($container, array('foo' => $this->buildParam('MISSING')));
+        $retriever = new ParameterRetriever($container, new ParameterBag(), array('foo' => $this->buildParam()));
 
         $this->assertSame('bar', $retriever->getParameter('foo'));
     }
@@ -29,7 +28,7 @@ class ParameterRetrieverTest extends \PHPUnit_Framework_TestCase
             ->with('foo')
             ->willReturn('bar');
 
-        $retriever = new ParameterRetriever($container, array('baz' => $this->buildParam('BAZ')));
+        $retriever = new ParameterRetriever($container, new ParameterBag(), array('baz' => $this->buildParam()));
 
         $this->assertSame('bar', $retriever->getParameter('foo'));
     }
@@ -40,9 +39,7 @@ class ParameterRetrieverTest extends \PHPUnit_Framework_TestCase
         $container->expects($this->never())
             ->method('getParameter');
 
-        $retriever = new ParameterRetriever($container, array('foo' => $this->buildParam('INCENTEEV_TEST_FOO')));
-
-        putenv('INCENTEEV_TEST_FOO=bar');
+        $retriever = new ParameterRetriever($container, new ParameterBag(['foo' => 'bar']), array('foo' => $this->buildParam()));
 
         $this->assertSame('bar', $retriever->getParameter('foo'));
     }
@@ -53,15 +50,13 @@ class ParameterRetrieverTest extends \PHPUnit_Framework_TestCase
         $container->expects($this->never())
             ->method('getParameter');
 
-        $retriever = new ParameterRetriever($container, array('foo' => $this->buildParam('INCENTEEV_TEST_BAR', true)));
-
-        putenv('INCENTEEV_TEST_BAR=true');
+        $retriever = new ParameterRetriever($container, new ParameterBag(['foo' => 'true']), array('foo' => $this->buildParam(true)));
 
         $this->assertSame(true, $retriever->getParameter('foo'));
     }
 
-    private function buildParam($envVar, $isYaml = false)
+    private function buildParam($isYaml = false)
     {
-        return array('variable' => $envVar, 'yaml' => $isYaml);
+        return array('yaml' => $isYaml);
     }
 }
